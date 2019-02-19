@@ -5,7 +5,8 @@ let G_Signo="";
 function anadir(esto)//al presionar los numeros
 {
 
-	if(document.getElementById("caja").value==0){
+	if(document.getElementById("caja").value==0)
+	{
 		document.getElementById("caja").value=esto;
 	}
 	else
@@ -23,22 +24,47 @@ function resultado()
 {
 	G_Numero2=document.getElementById("caja").value;//se captura el segundo valor
 	let claseinstanciada=new Calculadora(G_Numero1,G_Numero2);//se llama a la clase y se envian los valores
-	switch(G_Signo){
+	switch(G_Signo)//se determina a que funcion debe ir
+	{
 
 		case'+':
-			document.getElementById("caja").value=claseinstanciada.sumar();
+			claseinstanciada.sumarasinc().then(function(response)//then, cuando se pueda hacer. Se llama a la funcion, se almacena el resultado en response
+			{
+				document.getElementById("caja").value=response;
+			},function(error)//funcion por si hay algun error
+			{
+				document.getElementById("caja").value="ERROR";
+			});
 		break;
 
 		case'-':
-			document.getElementById("caja").value=claseinstanciada.restar();
+			claseinstanciada.restarasinc().then(function(response)
+			{
+				document.getElementById("caja").value=response;
+			},function(error)
+			{
+				document.getElementById("caja").value="ERROR";
+			});
 		break;
 
 		case'x':
-			document.getElementById("caja").value=claseinstanciada.multiplicar();
+			claseinstanciada.multiplicarasinc().then(function(response)
+			{
+				document.getElementById("caja").value=response;
+			},function(error)
+			{
+				document.getElementById("caja").value="ERROR";
+			});
 		break;
 
 		case'/':
-			document.getElementById("caja").value=claseinstanciada.dividir();
+			claseinstanciada.dividirasinc().then(function(response)
+			{
+				document.getElementById("caja").value=response;
+			},function(error)
+			{
+				document.getElementById("caja").value="ERROR";
+			});
 		break;
 	}
 }
@@ -57,23 +83,99 @@ class Calculadora
 		this.Numero2=_numero2;
 	}
 
+
 	sumar()
 	{
-		return parseInt(this.Numero1)+parseInt(this.Numero2);
+		return parseInt(this.Numero1)+parseInt(this.Numero2);//parseint para que no lo tome como texto
 	}
+
+
+	sumarasinc()//funcion asincrona
+	{
+		var objeto=this;//se almacena la calse calculadora
+		return new Promise(function(resolve,reject)//promise, en algun momento va a devolver algo
+		{
+			try
+			{
+				resolve(parseInt(objeto.Numero1)+parseInt(objeto.Numero2));//lo que va a devolver, al ir a objeto se va a la clase porque objeto es this
+			}
+			catch(err)
+			{
+				reject(err.message);//envia un mensaje de eroor si algo sale mal
+			}
+		});//se cierra la promesa
+
+	}
+
 
 	restar()
 	{
 		return parseInt(this.Numero1)-parseInt(this.Numero2);
 	}
 
+
+	restarasinc()
+	{
+		var objeto=this;
+		return new Promise(function(resolve,reject)
+		{
+			try
+			{
+				resolve(parseInt(objeto.Numero1)-parseInt(objeto.Numero2));
+			}
+			catch(err)
+			{
+				reject(err.message);
+			}
+		});	
+
+	}
+
+
 	multiplicar()
 	{
 		return parseInt(this.Numero1)*parseInt(this.Numero2);
 	}
 
+
+	multiplicarasinc()
+	{
+		var objeto=this;
+		return new Promise(function(resolve,reject)
+		{
+			try
+			{
+				resolve(parseInt(objeto.Numero1)*parseInt(objeto.Numero2));
+			}
+			catch(err)
+			{
+				reject(err.message);
+			}
+		});
+
+	}
+
+
 	dividir()
 	{
 		return parseInt(this.Numero1)/parseInt(this.Numero2);
+	}
+
+
+	dividirasinc()
+	{
+		var objeto=this;
+		return new Promise(function(resolve,reject)
+		{
+			try
+			{
+				resolve(parseInt(objeto.Numero1)+parseInt(objeto.Numero2));
+			}
+			catch(err)
+			{
+				reject(err.message);
+			}
+		});
+
 	}
 }
